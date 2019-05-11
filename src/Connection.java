@@ -1,3 +1,4 @@
+import data.Movie;
 import request.GetMoviesRequest;
 
 import java.io.IOException;
@@ -28,6 +29,8 @@ public class Connection extends Thread {
         while(isConnected){
             try {
                 GetMoviesRequest request= (GetMoviesRequest) in.readObject();
+                out.writeObject(new Movie("Lion King", "fuck", "", "family", "USA"));
+                out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
