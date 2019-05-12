@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class Main {
 
-    public static final int PORT = 8080;
+    public static final int PORT = 8331;
     public static LinkedList<Connection> serverList = new LinkedList<>(); // список всех нитей
 
     public static void main(String[] args) throws IOException {
