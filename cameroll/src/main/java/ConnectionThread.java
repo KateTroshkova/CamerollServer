@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
-public class Connection extends Thread {
+public class ConnectionThread extends Thread {
 
     private Socket client;
     private ObjectInputStream in;
@@ -14,7 +15,7 @@ public class Connection extends Thread {
     private boolean isConnected=true;
     private DataStore store;
 
-    public Connection(Socket client){
+    public ConnectionThread(Socket client){
         this.client=client;
         store=new DataStore();
         try {
@@ -40,7 +41,11 @@ public class Connection extends Thread {
                 if (request instanceof GetSessionRequest){
                     getSession((GetSessionRequest)request);
                 }
-            } catch (IOException e) {
+            } catch (SocketException e){
+                e.printStackTrace();
+                isConnected=false;
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -53,7 +58,6 @@ public class Connection extends Thread {
             out.writeInt(0);
             out.writeObject(store.getMovies());
             out.flush();
-            System.out.println("movies done");
         } catch (IOException e) {
             e.printStackTrace();
         }
