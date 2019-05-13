@@ -16,7 +16,6 @@ public class DataStore {
     public Movie[] getMovies(){
         try(Connection connection= DriverManager.getConnection("jdbc:mysql://localhost:3306/cameroll_data", "root", "root");
             Statement statement=connection.createStatement()){
-            //statement.execute("insert into user(name, password, manager) values ('vasiutkina', 'ia', '0')");
             ArrayList<Movie> movies=new ArrayList<>();
             ResultSet result = statement.executeQuery("select * from movies");
             while(result.next()){
@@ -41,42 +40,114 @@ public class DataStore {
     }
 
     public Cinema[] getCinemas(){
-        /**Cinema[] result=new Cinema[4];
-        result[0]=avrora;
-        result[1]=park;
-        result[2]=kino;
-        result[3]=victory;
-        return result;*/
+        try(Connection connection= DriverManager.getConnection("jdbc:mysql://localhost:3306/cameroll_data", "root", "root");
+            Statement statement=connection.createStatement()){
+            ArrayList<Cinema> cinemas=new ArrayList<>();
+            ResultSet result = statement.executeQuery("select * from cinemas");
+            while(result.next()){
+                Cinema cinema=new Cinema();
+                cinema.setId(result.getInt("id"));
+                cinema.setName(result.getString("name"));
+                cinema.setAddress(result.getString("address"));
+                cinemas.add(cinema);
+            }
+            Cinema[] response=new Cinema[cinemas.size()];
+            for(int i=0; i<cinemas.size(); i++){
+                response[i]=cinemas.get(i);
+            }
+            return response;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     public Session[] getSessionByMovie(Movie movie){
-        /**ArrayList<Session> result=new ArrayList<>();
-        for(Session session:sessions){
-            if (session.getMovie().equals(movie)){
-                result.add(session);
+        try(Connection connection= DriverManager.getConnection("jdbc:mysql://localhost:3306/cameroll_data", "root", "root");
+            Statement statement=connection.createStatement()){
+            ArrayList<Session> sessions=new ArrayList<>();
+            ResultSet result = statement.executeQuery("select * from sessions where movie="+movie.getId());
+            while(result.next()){
+                Session session=new Session();
+                session.setId(result.getInt("id"));
+                session.setMovie(movie);
+                session.setTime(result.getString("time"));
+                session.setDate(result.getString("date"));
+                session.setPrice(result.getInt("price"));
+                Statement cStatement=connection.createStatement();
+                ResultSet cinema=cStatement.executeQuery("select * from cinemas where id="+result.getInt("cinema"));
+                if (cinema.next()){
+                    Cinema sessionCinema=new Cinema();
+                    sessionCinema.setId(cinema.getInt("id"));
+                    sessionCinema.setName(cinema.getString("name"));
+                    sessionCinema.setAddress(cinema.getString("address"));
+                    session.setCinema(sessionCinema);
+                }
+                Statement hStatement=connection.createStatement();
+                ResultSet hall=hStatement.executeQuery("select * from halls where id="+result.getInt("hall"));
+                if (hall.next()){
+                    Hall sessionHall=new Hall();
+                    sessionHall.setId(hall.getInt("id"));
+                    sessionHall.setName(hall.getString("name"));
+                    sessionHall.setPlacePattern(hall.getString("pattern"));
+                    session.setHall(sessionHall);
+                }
+                sessions.add(session);
             }
+            Session[] response=new Session[sessions.size()];
+            for(int i=0; i<sessions.size(); i++){
+                response[i]=sessions.get(i);
+            }
+            return response;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        Session[] r=new Session[result.size()];
-        for(int i=0; i<result.size(); i++){
-            r[i]=result.get(i);
-         }
-         return r;*/
         return null;
     }
 
     public Session[] getSessionByCinema(Cinema cinema){
-        /**ArrayList<Session> result=new ArrayList<>();
-        for(Session session:sessions){
-            if (session.getCinema().equals(cinema)){
-                result.add(session);
+        try(Connection connection= DriverManager.getConnection("jdbc:mysql://localhost:3306/cameroll_data", "root", "root");
+            Statement statement=connection.createStatement()){
+            ArrayList<Session> sessions=new ArrayList<>();
+            ResultSet result = statement.executeQuery("select * from sessions where cinema="+cinema.getId());
+            while(result.next()){
+                Session session=new Session();
+                session.setId(result.getInt("id"));
+                session.setCinema(cinema);
+                session.setTime(result.getString("time"));
+                session.setDate(result.getString("date"));
+                session.setPrice(result.getInt("price"));
+                Statement mStatement=connection.createStatement();
+                ResultSet movie=mStatement.executeQuery("select * from movies where id="+result.getInt("movie"));
+                if (movie.next()){
+                    Movie sessionMovie=new Movie();
+                    sessionMovie.setId(movie.getInt("id"));
+                    sessionMovie.setName(movie.getString("name"));
+                    sessionMovie.setDescription(movie.getString("description"));
+                    sessionMovie.setActors(movie.getString("actors"));
+                    sessionMovie.setCountry(movie.getString("country"));
+                    sessionMovie.setGenre(movie.getString("genre"));
+                    session.setMovie(sessionMovie);
+                }
+                Statement hStatement=connection.createStatement();
+                ResultSet hall=hStatement.executeQuery("select * from halls where id="+result.getInt("hall"));
+                if (hall.next()){
+                    Hall sessionHall=new Hall();
+                    sessionHall.setId(hall.getInt("id"));
+                    sessionHall.setName(hall.getString("name"));
+                    sessionHall.setPlacePattern(hall.getString("pattern"));
+                    session.setHall(sessionHall);
+                }
+                sessions.add(session);
             }
+            Session[] response=new Session[sessions.size()];
+            for(int i=0; i<sessions.size(); i++){
+                response[i]=sessions.get(i);
+            }
+            return response;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        Session[] r=new Session[result.size()];
-        for(int i=0; i<result.size(); i++){
-            r[i]=result.get(i);
-        }
-        return r;*/
         return null;
     }
 
