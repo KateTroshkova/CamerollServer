@@ -1,1 +1,3 @@
-select * from sessions where movie='1'
+select * from user
+
+
